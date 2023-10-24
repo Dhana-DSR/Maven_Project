@@ -35,13 +35,6 @@ steps:
     codeCoverageTool: 'Cobertura' # or 'JaCoCo' or other supported code coverage tools
     summaryFileLocation: '**/coverage.xml' # Path to your code coverage report file
 
-# Optionally, you can publish additional artifacts
-- task: PublishBuildArtifacts@1
-  inputs:
-    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
-    artifactName: 'drop'
-    publishLocation: 'Container'
-
 # Or, publish specific files or directories as artifacts
 - task: CopyFiles@2
   inputs:
