@@ -5,9 +5,12 @@ pool:
   name: 'Agent01' # You can change this to ubuntu-latest for Linux build environment
 
 steps:
-- task: UseJavaVersion@1
+- task: JavaToolInstaller@0
   inputs:
-    versionSpec: '11' # Use the desired version of Java
+    versionSpec: '11'
+    jdkArchitectureOption: 'x64'
+    jdkSourceOption: 'PreInstalled'
+
 
 - script: 'ant clean' # Clean the project before building
   displayName: 'Ant Clean'
