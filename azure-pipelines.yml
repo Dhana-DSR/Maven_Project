@@ -1,0 +1,58 @@
+trigger:
+- 'master'
+
+pool:
+  name: 'Agent01' # You can change this to ubuntu-latest for Linux build environment
+
+steps:
+- task: UseJavaVersion@1
+  inputs:
+    versionSpec: '11' # Use the desired version of Java
+
+- script: 'ant clean' # Clean the project before building
+  displayName: 'Ant Clean'
+
+- script: 'ant -f build.xml compile' # Build the project, adjust the target name if necessary
+  displayName: 'Ant Build'
+
+- script: 'ant -f build.xml run-tests' # Run tests (assuming you have a target named "run-tests")
+  displayName: 'Run Tests'
+
+# Optionally, you can run additional tasks like generating reports here
+# For example, if your build script generates test reports in a specific directory
+- script: 'ant -f build.xml generate-reports'
+  displayName: 'Generate Reports'
+
+# Publish test results if your build generates JUnit or TestNG XML reports
+- task: PublishTestResults@2
+  inputs:
+    testResultsFormat: 'JUnit' # or 'TestNG'
+    testResultsFiles: '**/TEST-*.xml' # Adjust the pattern to match your test report files
+
+# Publish code coverage reports if applicable
+- task: PublishCodeCoverageResults@1
+  inputs:
+    codeCoverageTool: 'Cobertura' # or 'JaCoCo' or other supported code coverage tools
+    summaryFileLocation: '**/coverage.xml' # Path to your code coverage report file
+
+# Optionally, you can publish additional artifacts
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'drop'
+    publishLocation: 'Container'
+
+# Or, publish specific files or directories as artifacts
+- task: CopyFiles@2
+  inputs:
+    SourceFolder: '$(system.defaultworkingdirectory)'
+    Contents: '**'
+    TargetFolder: '$(Build.ArtifactStagingDirectory)'
+	
+- task: PublishBuildArtifacts@1
+  inputs:
+    pathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    artifactName: 'drop'
+    publishLocation: 'Container'
+
+# Note: Uncomment and customize the additional steps according to your project's requirements.
